@@ -18,7 +18,7 @@ function callCREST() {
       
       var userCounts = 0;
       var serviceStatus = "offline";
-      
+            
       if (req.readyState == 4 && req.status == 200) {
         console.log(req.responseText);
       
