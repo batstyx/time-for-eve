@@ -1,0 +1,35 @@
+{
+    "appKeys": {
+        "CREST_KEY_EVE_SERVICE_STATUS": 1,
+        "CREST_KEY_EVE_USER_COUNT": 0
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Notion Planetary",
+    "enableMultiJS": true,
+    "longName": "Time for EVE Online",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/EVE E.png",
+                "name": "IMAGE_BACKGROUND",
+                "targetPlatforms": null,
+                "type": "bitmap"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Time for EVE",
+    "targetPlatforms": [
+        "aplite",
+        "basalt",
+        "chalk"
+    ],
+    "uuid": "1c7166b7-c5d0-400c-b725-2261967ab5b4",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
