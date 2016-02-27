@@ -1,26 +1,35 @@
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
-    callback(this.responseText);
+    callback(this);
   };
   xhr.open(type, url);
   xhr.send();
 };
 
 function callCREST() {
-  var url = "https://public-crest.eveonline.com/";
+  var url = "https://crest-tq.eveonline.com/";
   
   xhrRequest(url, 'GET',
-    function(responseText) {
-      console.log(url);
-      console.log(responseText);
-      var json = JSON.parse(responseText);
+    function(req) {
+      console.log("url: " + url);
+      console.log("readyState: " + req.readyState);
+      console.log("status: " + req.status);
       
-      var userCounts = json.userCounts.eve;
-      console.log("User Counts is " + userCounts);
+      var userCounts = 0;
+      var serviceStatus = "offline";
       
-      var serviceStatus = json.serviceStatus.eve;
-      console.log("Service Status is " + serviceStatus);
+      if (req.readyState == 4 && req.status == 200) {
+        console.log(req.responseText);
+      
+        var json = JSON.parse(req.responseText);
+      
+        userCounts = json.userCounts.eve;
+        console.log("User Counts is " + userCounts);
+      
+        serviceStatus = json.serviceStatus.eve;
+        console.log("Service Status is " + serviceStatus);
+      }
     
       var dictionary = {
         "CREST_KEY_EVE_USER_COUNT": userCounts,
