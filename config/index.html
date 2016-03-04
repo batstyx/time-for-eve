@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Configuration</title>
+        <link rel='stylesheet' type='text/css' href='css/slate.min.css'>
+        <script src='js/slate.min.js'></script>
+        <style>
+        .title {
+          padding: 15px 10px;
+          text-transform: uppercase;
+          font-family: 'PT Sans', sans-serif;
+          font-size: 1.2em;
+          font-weight: 500;
+          color: #888888;
+          text-align: center;
+        }
+        </style>
+    </head>
+    <body>
+        <h1 class='title'>Configuration</h1>
+
+        <div class="item-container">
+        <div class="item-container-header">Display Options</div>
+        <div class="item-container-content">
+            <label class="item">
+                Market Items
+                <select id="market-items-group" name="text-align" class="item-select">
+                    <option class="item-select-option" value="char">Character</option>
+                    <option class="item-select-option" value="mine">Minerals</option>
+                </select>
+            </label>
+        </div>
+        </div>
+
+        <div class="item-container">
+            <div class="item-container-header">EVE Authentication</div>
+            <div class="item-container-content" id="eve-authenticate">  
+                <label class="item" >              
+                    <a id="eve-redirect">
+                        <img src="EVE_SSO_Login_Buttons_Large_Black.png" alt="Give Watchface access to your EVE Character">
+                    </a>
+                </label>
+            </div>
+            <div class="item-container-content" id="eve-disconnect"> 
+                <label class="item">
+                    <div class="button-container">
+                        <input id='disconnect_button' type="button" class="item-button" value="DISCONNECT">
+                    </div>   
+                </label> 
+            </div>           
+            <div class="item-container-footer" id="eve-authenticate-label">
+                Give Watchface access to your EVE Character
+            </div>
+            <div class="item-container-footer" id="eve-disconnect-label">
+                <p>Clicking the button above does not prevent the Watchface from
+                having access to your character, it just tells it to stop using it.</p> 
+                <p>To completely disable access to your character, you need to visit the <a
+                href="https://community.eveonline.com/support/third-party-applications/">EVE 
+                Third Party Applications</a> page to revoke access to this application.</p>
+            </div>            
+        </div>
+        <input type="hidden" id="eve-authorization-code">
+        <div class='item-container'>
+          <div class='button-container'>
+            <input id='submit_button' type='button' class='item-button' value='SUBMIT'>
+          </div>
+        </div>            
+
+        <script>
+            function getQueryParam(variable, defaultValue) {
+              var query = location.search.substring(1);
+              var vars = query.split('&');
+              for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] === variable) {
+                  return decodeURIComponent(pair[1]);
+                }
+              }
+              return defaultValue || false;
+            }
+            
+            const APP_UUID = "7d3deca7-ac72-4c99-b03a-8531d88c7aa8";
+            
+            function loadConfig() {
+                console.log('loadConfig');
+                if (localStorage[APP_UUID]) {
+                    var json = localStorage[APP_UUID];
+                    console.log('Loading config: ' + json);
+                    var config = JSON.parse(json);
+                    $('#market-items-group').val('' + config.marketItemGroup);
+                    $('#eve-authorization-code').val('' + config.eveAuthorizationCode);
+                } else {
+                    console.log('Creating default config');
+                    $('#market-items-group').val('char');
+                    $('#eve-authorization-code').val('');
+                }
+            }
+            
+            function getConfig() {
+              console.log('getConfig');
+              var config = {
+                'eveAuthorizationCode': $('#eve-authorization-code').val(),
+                'marketItemGroup': $('#market-items-group').val(),
+              };
+              localStorage[APP_UUID] = JSON.stringify(config);
+              console.log('Got config: ' + JSON.stringify(config));
+              return config;
+            }
+            
+            function showElement(elementID, show) {
+                var displayStyle = 'none';
+                if (show) {displayStyle = ''}
+                document.getElementById(elementID).style.display = displayStyle;                 
+            }
+            
+            function authenticateToggleVisibility() {
+                console.log('authenticateToggleVisibility');
+                console.log('eve-authorization-code: ' +  $('#eve-authorization-code').val());
+                var showAuthentication = $('#eve-authorization-code').val() == '';
+                console.log('showAuthentication: ' + showAuthentication);
+                showElement('eve-authenticate', showAuthentication);
+                showElement('eve-authenticate-label', showAuthentication);
+                showElement("eve-disconnect", !showAuthentication);
+                showElement("eve-disconnect-label", !showAuthentication);                   
+            }
+            
+            var disconnectButton = document.getElementById('disconnect_button');
+            disconnectButton.addEventListener('click', function() {
+              console.log('Disconnect');
+              $('#eve-authorization-code').val('');
+              authenticateToggleVisibility();
+            })
+           
+            var submitButton = document.getElementById('submit_button');
+            submitButton.addEventListener('click', function() {
+              console.log('Submit');
+              // Set the return URL depending on the runtime environment
+              var return_to = localStorage['return_to'] || getQueryParam('return_to', 'pebblejs://close#');
+              localStorage.removeItem('return_to');
+              console.log('return_to: ' + return_to);
+              document.location = return_to + encodeURIComponent(JSON.stringify(getConfig()));
+            });
+           
+           (function() {              
+               loadConfig();
+               
+                var json = window.location.hash;
+                if (json) { json = json.substring(1); }
+                console.log('Got external config: ' + json);
+                if (json) {
+                    var externalConfig  = JSON.parse(json);
+                    var source = externalConfig.source;
+                    if (source && source == "pebble") {
+                        var return_to = getQueryParam('return_to', 'pebblejs://close#');
+                        console.log('return_to: ' + return_to);                    
+                        localStorage['return_to'] = return_to;
+                        var redirect = externalConfig.redirect;
+                        console.log('redirect: ' + redirect);
+                        $('#eve-redirect').attr('href', redirect);
+                    }           
+                    var code = externalConfig.code;
+                    console.log('code: ' + code);
+                    if (code) { $('#eve-authorization-code').val(code); }            
+                    var code_error = externalConfig.code_error;
+                    console.log('code_error: ' + code_error);
+                }
+                authenticateToggleVisibility();
+            })();
+        </script>
+    </body>
+</html>

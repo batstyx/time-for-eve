@@ -46,6 +46,22 @@ void main_window_load(Window *window) {
   init_text_layer(window_layer, &data->service_status_layer, 
                   SERVICE_STATUS_LEFT, SERVICE_STATUS_TOP, SERVICE_STATUS_WIDTH, SERVICE_STATUS_HEIGHT, 
                   SERVICE_STATUS_FONT, SERVICE_STATUS_ALIGN);
+  init_text_layer(window_layer, &data->market_item_desc_layer, 
+                  MARKET_ITEM_DESC_LEFT, MARKET_ITEM_DESC_TOP, MARKET_ITEM_DESC_WIDTH, MARKET_ITEM_DESC_HEIGHT, 
+                  MARKET_ITEM_DESC_FONT, MARKET_ITEM_DESC_ALIGN);
+  text_layer_set_text_color(data->market_item_desc_layer, GColorWhite);
+  init_text_layer(window_layer, &data->market_item_value1_layer, 
+                  MARKET_ITEM_VALUE1_LEFT, MARKET_ITEM_VALUE1_TOP, MARKET_ITEM_VALUE1_WIDTH, MARKET_ITEM_VALUE1_HEIGHT, 
+                  MARKET_ITEM_VALUE1_FONT, MARKET_ITEM_VALUE1_ALIGN);
+  text_layer_set_text_color(data->market_item_value1_layer, GColorWhite);
+  init_text_layer(window_layer, &data->market_item_value2_layer, 
+                  MARKET_ITEM_VALUE2_LEFT, MARKET_ITEM_VALUE2_TOP, MARKET_ITEM_VALUE2_WIDTH, MARKET_ITEM_VALUE2_HEIGHT, 
+                  MARKET_ITEM_VALUE2_FONT, MARKET_ITEM_VALUE2_ALIGN);
+  text_layer_set_text_color(data->market_item_value2_layer, GColorWhite);
+  init_text_layer(window_layer, &data->market_item_value3_layer, 
+                  MARKET_ITEM_VALUE3_LEFT, MARKET_ITEM_VALUE3_TOP, MARKET_ITEM_VALUE3_WIDTH, MARKET_ITEM_VALUE3_HEIGHT, 
+                  MARKET_ITEM_VALUE3_FONT, MARKET_ITEM_VALUE3_ALIGN);
+  text_layer_set_text_color(data->market_item_value3_layer, GColorWhite);  
 }
 
 void main_window_unload(Window *window) {
@@ -57,5 +73,9 @@ void main_window_unload(Window *window) {
   text_layer_destroy(data->eve_time_layer);
   text_layer_destroy(data->time_layer);
   text_layer_destroy(data->user_count_layer);
-  text_layer_destroy(data->service_status_layer);
+  text_layer_destroy(data->service_status_layer);    
+  text_layer_destroy(data->market_item_desc_layer);
+  text_layer_destroy(data->market_item_value1_layer);
+  text_layer_destroy(data->market_item_value2_layer);
+  text_layer_destroy(data->market_item_value3_layer);
 }

@@ -1,10 +1,16 @@
 {
     "appKeys": {
+        "CREST_KEY_CHAR_LOCATION": 7,
+        "CREST_KEY_CHAR_NAME": 6,
         "CREST_KEY_EVE_SERVICE_STATUS": 1,
-        "CREST_KEY_EVE_USER_COUNT": 0
+        "CREST_KEY_EVE_USER_COUNT": 0,
+        "CREST_KEY_MARKET_ITEM_DESC": 2,
+        "CREST_KEY_MARKET_ITEM_VALUE1": 3,
+        "CREST_KEY_MARKET_ITEM_VALUE2": 4,
+        "CREST_KEY_MARKET_ITEM_VALUE3": 5
     },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "Notion Planetary",
     "enableMultiJS": true,

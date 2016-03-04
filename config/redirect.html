@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Verify EVE Identity</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var CONFIG_URL = 'https://batstyx.github.io/time-for-eve/config/#';
+            
+            function next_page(conf) {
+                var json = JSON.stringify(conf);
+                window.location.href = CONFIG_URL + json;
+            }
+            
+            function error(msg) {
+                next_page({
+                    "code": '',
+                    "code_error": msg
+                });
+            }
+            
+            var code_info = window.location.search;
+            if (code_info) {
+                code_info = code_info.substring(1);
+            }
+            else {
+                error('There was a problem communicating with CCP. You may need to try again later (-3).');
+            }
+            // Straight from the Google...
+            var params = {}, queryString = code_info,
+                regex = /([^&=]+)=([^&]*)/g, m;
+            while (m = regex.exec(queryString)) {
+                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+            }
+            if (params.code) {
+                next_page(params);
+            }
+            else {
+                error('You did not grant the Watchface access to your character (-1).');
+            }
+        </script>
+    </body>
+</html>
