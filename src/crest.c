@@ -77,7 +77,7 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 void crest_timed_update(struct tm *tick_time) {
   if(tick_time->tm_min % s_retry_time == 2) {  
-    update_crest(0);
+    update_crest();
   }
 }
 
@@ -124,7 +124,7 @@ void crest_initialise(MainView *data) {
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
 
-  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  app_message_open(APP_MESSAGE_INBOX_SIZE_MINIMUM, APP_MESSAGE_OUTBOX_SIZE_MINIMUM);
 }
   
 void crest_terminate() {

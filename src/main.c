@@ -59,7 +59,7 @@ static void init() {
   });
   
   window_stack_push(s_main_window, true);
- 
+  
   eve_time_initialise(data->eve_time_layer);
   time_initialise(data->time_layer);
   crest_initialise(data);
