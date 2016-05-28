@@ -1,25 +1,33 @@
+var DEBUG = true;
+var INFO = true;
+var ERR = true;
+var log =  {
+  debug: DEBUG ? function (message) { console.log("DBG " + message); } : function (){},
+  info: INFO ? function (message) { console.log("INF " + message); } : function (){},
+  error: ERR ? function (message) { console.log("ERR " + message); } : function (){},
+};
+
 function sendToPebble(dictionary) {
-  console.log("Sending to Pebble...");
+  log.debug("sendToPebble");
   Pebble.sendAppMessage(dictionary,
         function(e) {
-          console.log("transactionId: " + e.data.transactionId);
-          console.log("Sent!");          
+          log.info("sendToPebble Sent [#" + e.data.transactionId + "]");          
         },
         function(e) {
-          console.log("transactionId: " + e.data.transactionId);
-          console.log("Error!");
-          console.log("error: " + e.error.message);
+          log.error("sendToPebble Error [#" + e.data.transactionId + "]");
+          log.error("sendToPebble error: " + e.error.message);
         });
 }
 
 var xhrRequest = function (url, type, success, failure) {
+  log.debug("xhrRequest url: " + url);
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
-    console.log("url: " + url);
-    console.log("readyState: " + this.readyState);
-    console.log("status: " + this.status);
+    log.debug("xhrRequest onload url: " + url);
+    log.debug("xhrRequest readyState: " + this.readyState);
+    log.debug("xhrRequest status: " + this.status);
     if (this.readyState == 4 && this.status == 200) {
-      console.log("responseText: " + this.responseText);
+      log.debug("xhrRequest responseText: " + this.responseText);
       var json = JSON.parse(this.responseText);
       success(json);
     } else {
@@ -34,15 +42,17 @@ var xhrRequest = function (url, type, success, failure) {
 };
 
 function sendEVEServerInfo(serviceStatus, userCount) {
-  console.log("Service Status is " + serviceStatus);
-  console.log("User Count is " + userCount);
+  log.info("sendEVEServerInfo");
+  log.debug("sendEVEServerInfo serviceStatus: " + serviceStatus);
+  log.debug("sendEVEServerInfo userCount: " + userCount);
   sendToPebble({
     "CREST_KEY_EVE_USER_COUNT": userCount,
     "CREST_KEY_EVE_SERVICE_STATUS": serviceStatus
   });
 }
 
-function getServerInfo() {
+function getServerInfo() {  
+  log.info("getServerInfo");
   xhrRequest('https://crest-tq.eveonline.com/', 'GET',
              function(json) { sendEVEServerInfo(json.serviceStatus.eve, json.userCounts.eve_str); },
              function(req) { sendEVEServerInfo("offline", "0"); }
@@ -72,6 +82,7 @@ function format_number(value) {
 }
 
 function sendMarketItemInfo(item, itemDesc) {
+  log.info("sendMarketItemInfo");
   sendToPebble({
     "CREST_KEY_MARKET_ITEM_DESC": itemDesc,
     "CREST_KEY_MARKET_ITEM_VALUE1": format_number(item.volume),
@@ -81,26 +92,26 @@ function sendMarketItemInfo(item, itemDesc) {
 }
 
 function getMarketItemInfo(regionId, typeId, typeDesc) {
-  console.log("getMarketItemInfo");
-  console.log("getMarketItemInfo typeId: " + typeId);
+  log.debug("getMarketItemInfo");
+  log.debug("getMarketItemInfo typeId: " + typeId);
   var refreshItem = false;
   var stored_json = localStorage.getItem(typeId);  
   if (stored_json) {
-    console.log("getMarketItemInfo Stored item available");    
+    log.debug("getMarketItemInfo Stored item available");    
     var stored = JSON.parse(stored_json);
     var storedDate = new Date(stored.date);
-    console.log("getMarketItemInfo Stored item date: " + storedDate);    
+    log.debug("getMarketItemInfo Stored item date: " + storedDate);    
     var expiryDate = new Date(new Date() - 172800000);
-    console.log("getMarketItemInfo Expiry date: " + expiryDate);    
+    log.debug("getMarketItemInfo Expiry date: " + expiryDate);    
     if(storedDate < expiryDate) {
-      console.log("getMarketItemInfo Stored item expired");    
+      log.debug("getMarketItemInfo Stored item expired");    
       var retrievedDate = new Date(stored.retrieved);
-      console.log("getMarketItemInfo Stored item retrieved date: " + retrievedDate);    
+      log.debug("getMarketItemInfo Stored item retrieved date: " + retrievedDate);    
       var retrievedExpiryDate = new Date(new Date() - 10800000);
-      console.log("getMarketItemInfo Stored item retrieved expirydate: " + retrievedExpiryDate);    
-      if(retrievedDate < retrievedExpiryDate) { refreshItem = true; } else { console.log("getMarketItemInfo Stored item retrieved recently"); }
+      log.debug("getMarketItemInfo Stored item retrieved expirydate: " + retrievedExpiryDate);    
+      if(retrievedDate < retrievedExpiryDate) { refreshItem = true; } else { log.debug("getMarketItemInfo Stored item retrieved recently"); }
     } else {
-      console.log("getMarketItemInfo Stored item valid");    
+      log.debug("getMarketItemInfo Stored item valid");    
       sendMarketItemInfo(stored, typeDesc);
     }
   } else { 
@@ -112,7 +123,7 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
                 var newest = json.items[json.totalCount - 1];
                 newest.retrieved = new Date();
                 var item_json = JSON.stringify(newest);
-                console.log("getMarketItemInfo Store item: " + item_json);    
+                log.debug("getMarketItemInfo Store item: " + item_json);    
                 localStorage.setItem(typeId, item_json);
                 sendMarketItemInfo(newest, typeDesc);
               },
@@ -130,10 +141,13 @@ var marketList = character;
 var TheForgeRegionId = 10000002;
 
 function getCurrentMarketItem() {  
+  log.info("getCurrentMarketItem");
   var priceIterator = localStorage.getItem("priceIterator") || 0;
+  log.debug("getCurrentMarketItem priceIterator: " + priceIterator);
   var marketItemGroup = localStorage.getItem("marketItemGroup") || character.group;
+  log.debug("getCurrentMarketItem  marketItemGroup: " + marketItemGroup);
   if (marketList.group !== marketItemGroup) {
-    console.log('marketItemGroup changed!');
+   log.debug('marketItemGroup changed!');
     if (marketItemGroup === character.group) {
       marketList = character;
     } else if (marketItemGroup === minerals.group) {
@@ -152,24 +166,24 @@ var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
 function resolve_tokens(code, callback) {
-  console.log("resolve_tokens");
-  console.log("resolve_tokens code: " + code);
+  log.debug("resolve_tokens");
+  log.debug("resolve_tokens code: " + code);
   var req = new XMLHttpRequest();
   req.open("POST", "https://login.eveonline.com/oauth/token", true);
   req.setRequestHeader("Authorization", "Basic MTI5NDEyMzQ3NDkyNDEwNTg2MDE0YWUzYTEzN2E4YzE6SnBQMDRJMXMzMjF2TVhHelBkNWg3d1czZUFSaEVDZ3pUT1FqMGFsVg==");
   req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   req.setRequestHeader("Host", "login.eveonline.com");
   req.onload = function(e) {
-    console.log("resolve_tokens readyState: "+ req.readyState);
-    console.log("resolve_tokens status: "+ req.status);
-    console.log("resolve_tokens responseText: " + req.responseText);
+    log.debug("resolve_tokens readyState: "+ req.readyState);
+    log.debug("resolve_tokens status: "+ req.status);
+    log.debug("resolve_tokens responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {
       var result = JSON.parse(req.responseText);
 
       if (result.refresh_token && result.access_token) {
-        console.log("resolve_tokens refresh_token: " + result.refresh_token);
+        log.info("resolve_tokens refresh_token: " + result.refresh_token);
         localStorage.setItem("refresh_token", result.refresh_token);
-        console.log("resolve_tokens access_token: " + result.access_token);
+        log.info("resolve_tokens access_token: " + result.access_token);
         localStorage.setItem("access_token", result.access_token);
 
         callback();
@@ -186,11 +200,11 @@ function resolve_tokens(code, callback) {
 }
 
 function use_access_token(callback) {
-  console.log("use_access_token");
+  log.debug("use_access_token");
   var refresh_token = localStorage.getItem("refresh_token");
-  console.log("use_access_token refresh_token: " + refresh_token);
+  log.debug("use_access_token refresh_token: " + refresh_token);
   var access_token = localStorage.getItem("access_token");
-  console.log("use_access_token access_token: " + access_token);
+  log.debug("use_access_token access_token: " + access_token);
 
   if (!refresh_token) return;
 
@@ -200,57 +214,59 @@ function use_access_token(callback) {
 }
 
 function valid_token(access_token, success, failure) {
-  console.log("valid_token");
+  log.debug("valid_token");
   var req = new XMLHttpRequest();
   req.open("GET", "https://login.eveonline.com/oauth/verify", true);
   req.setRequestHeader("Authorization", "Bearer " + access_token);
   req.setRequestHeader("Host", "login.eveonline.com");
   req.onload = function(e) {
-    console.log("valid_token readyState: "+ req.readyState);
-    console.log("valid_token status: "+ req.status);
-    console.log("valid_token responseText: " + req.responseText);
+    log.debug("valid_token readyState: "+ req.readyState);
+    log.debug("valid_token status: "+ req.status);
+    log.debug("valid_token responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {
       var result = JSON.parse(req.responseText);
       
       if (result.TokenType == "Character") {
-        console.log("valid_token Character");
+        log.debug("valid_token Character");
+        log.debug("valid_token CharacterID: " + result.CharacterID);
         localStorage.setItem("characterId", result.CharacterID);
+        log.debug("valid_token CharacterName: " + result.CharacterName);        
         localStorage.setItem("characterName", result.CharacterName);
-        console.log("valid_token success");
+        log.info("valid_token success");
         success(access_token);
         return;
       }      
       if (result.ExceptionType) {
-        console.log("valid_token Exception");
+        log.error("valid_token Exception");
         localStorage.removeItem("code");
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         localStorage.setItem("code_error", result.exceptionType + ":" + result.message);
-        console.log("valid_token code_error: " + localStorage.getItem("code_error"));
+        log.error("valid_token code_error: " + localStorage.getItem("code_error"));
       }
     }
-    console.log("valid_token failure");
+    log.error("valid_token failure");
     failure();
   };
   req.send();
 }
 
 function refresh_access_token(refresh_token, callback) {
-  console.log("refresh_access_token");
+  log.debug("refresh_access_token");
   var req = new XMLHttpRequest();
   req.open("POST", "https://login.eveonline.com/oauth/token", true);
   req.setRequestHeader("Authorization", "Basic MTI5NDEyMzQ3NDkyNDEwNTg2MDE0YWUzYTEzN2E4YzE6SnBQMDRJMXMzMjF2TVhHelBkNWg3d1czZUFSaEVDZ3pUT1FqMGFsVg==");
   req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   req.setRequestHeader("Host", "login.eveonline.com");
   req.onload = function(e) {
-    console.log("refresh_access_token readyState: "+ req.readyState);
-    console.log("refresh_access_token status: "+ req.status);
-    console.log("refresh_access_token responseText: " + req.responseText);
+    log.debug("refresh_access_token readyState: "+ req.readyState);
+    log.debug("refresh_access_token status: "+ req.status);
+    log.debug("refresh_access_token responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {          
       var result = JSON.parse(req.responseText);
 
       if (result.access_token) {
-        console.log("refresh_access_token access_token: " + result.access_token);
+        log.info("refresh_access_token access_token: " + result.access_token);
         localStorage.setItem("access_token", result.access_token);
         callback(result.access_token);
       }
@@ -260,8 +276,9 @@ function refresh_access_token(refresh_token, callback) {
 }
 
 function sendCharacterInfo(charName, charLocation) {
-  console.log("Character Name is " + charName);
-  console.log("Character Location is " + charLocation);
+  log.info("sendCharacterInfo");
+  log.debug("sendCharacterInfo charName: " + charName);
+  log.debug("sendCharacterInfo charLocation: " + charLocation);
   sendToPebble({
     "CREST_KEY_CHAR_NAME": charName,
     "CREST_KEY_CHAR_LOCATION": charLocation
@@ -269,19 +286,19 @@ function sendCharacterInfo(charName, charLocation) {
 }
 
 function getCharacterLocation() {
-  console.log("getCharacterLocation");
+  log.info("getCharacterLocation");
   use_access_token(function(access_token) {
     var characterId = localStorage.getItem("characterId");
-    console.log("getCharacterLocation characterId: " + characterId);    
+    log.debug("getCharacterLocation characterId: " + characterId);    
     var url = "https://crest-tq.eveonline.com/characters/" + characterId + "/location/";
-    console.log("getCharacterLocation url: " + url);
+    log.debug("getCharacterLocation url: " + url);
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
     req.setRequestHeader("Authorization", "Bearer " + access_token);
     req.onload = function(e) {
-      console.log("getCharacterInfo readyState: " + req.readyState);
-      console.log("getCharacterInfo status: " + req.status);
-      console.log("getCharacterInfo responseText: " + req.responseText);
+      log.debug("getCharacterInfo readyState: " + req.readyState);
+      log.debug("getCharacterInfo status: " + req.status);
+      log.debug("getCharacterInfo responseText: " + req.responseText);
       if (req.readyState == 4 && req.status == 200) {          
         var result = JSON.parse(req.responseText);
         if (result) {
@@ -297,8 +314,8 @@ function getCharacterLocation() {
 
 Pebble.addEventListener('ready',
   function(e) {
-    console.log("PebbleKit JS ready!");
-    console.log(JSON.stringify(e));
+    log.info("Pebble Event: ready");
+    log.debug("Pebble Message: " + JSON.stringify(e));
     
     getServerInfo();
     getCurrentMarketItem();
@@ -309,8 +326,8 @@ Pebble.addEventListener('ready',
 // Listen for when an AppMessage is received
 Pebble.addEventListener('appmessage',
   function(e) {
-    console.log("AppMessage received!");
-    console.log(JSON.stringify(e));
+    log.info("Pebble Event: appmessage");
+    log.debug("Pebble Message: " + JSON.stringify(e));
     
     getServerInfo();
     getCurrentMarketItem();
@@ -320,11 +337,11 @@ Pebble.addEventListener('appmessage',
 
 // When you click on Settings in Pebble's phone app. Go to the configuration.html page.
 function show_configuration() {
-    console.log("show_configuration");
+    log.debug("show_configuration");
     var code = localStorage.getItem("code");
-    console.log("code: " + code);
+    log.debug("show_configuration code: " + code);
     var code_error = localStorage.getItem("code_error");
-    console.log("code_error: " + code_error);
+    log.debug("show_configuration code_error: " + code_error);
     localStorage.removeItem("code_error");
 
     var json = JSON.stringify({
@@ -337,18 +354,18 @@ function show_configuration() {
 
 // When you click Save on the configuration.html page, receive the configuration response here.
 function webview_closed(e) {
-    console.log("webview_closed");
+    log.debug("webview_closed");
     var config = JSON.parse(decodeURIComponent(e.response));
-    console.log("config: " + JSON.stringify(config));
+    log.debug("config: " + JSON.stringify(config));
     var marketItemGroup = config.marketItemGroup;
     if (marketItemGroup) {
-      console.log("marketItemGroup: " + marketItemGroup);
+      log.info("marketItemGroup: " + marketItemGroup);
       localStorage.setItem("marketItemGroup", marketItemGroup);
       getCurrentMarketItem();
     }
 
     var eveAuthorizationCode = config.eveAuthorizationCode;
-    console.log("eveAuthorizationCode: " + eveAuthorizationCode);
+    log.debug("eveAuthorizationCode: " + eveAuthorizationCode);
     var old_code = localStorage.getItem("code");
     if (old_code != eveAuthorizationCode) {
         localStorage.removeItem("refresh_token");
