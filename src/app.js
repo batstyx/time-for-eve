@@ -200,6 +200,7 @@ function getCurrentMarketItem() {
 var crest_client_id = "129412347492410586014ae3a137a8c1";
 var crest_redirect_url = "https://login.eveonline.com/oauth/authorize";
 var crest_scope = "publicData+characterLocationRead";
+//var app_config_url = "https://rawgit.com/batstyx/time-for-eve/master/config/index.html";
 var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
@@ -375,18 +376,24 @@ Pebble.addEventListener('appmessage',
 
 // When you click on Settings in Pebble's phone app. Go to the configuration.html page.
 function show_configuration() {
-    log.debug("show_configuration");
-    var code = localStorage.getItem("code");
-    log.debug("show_configuration code: " + code);
-    var code_error = localStorage.getItem("code_error");
-    log.debug("show_configuration code_error: " + code_error);
-    localStorage.removeItem("code_error");
+  log.debug("show_configuration");
+  var marketItemGroup = getMarketItemGroup();
+  var code = localStorage.getItem("code");
+  log.debug("show_configuration code: " + code);
+  var code_error = localStorage.getItem("code_error");
+  log.debug("show_configuration code_error: " + code_error);
+  localStorage.removeItem("code_error");
 
-    var json = JSON.stringify({
-      "source": "pebble",
-      "redirect": crest_redirect_url + "?response_type=code&client_id=" + crest_client_id + "&redirect_uri=" + app_redirect_url + "&scope=" + crest_scope,
-    });
-
+  var json = JSON.stringify({
+    "source": "pebble",
+    "marketItemGroup": marketItemGroup,
+    "code": code,
+    "redirect": crest_redirect_url + "?response_type=code&client_id=" + crest_client_id + "&redirect_uri=" + app_redirect_url + "&scope=" + crest_scope,
+  });
+  
+  log.debug("show_configuration json: " + json);  
+  
+  log.debug("show_configuration app_config_url: " + app_config_url);  
   Pebble.openURL(app_config_url + "#" + json);
 }
 
@@ -397,8 +404,10 @@ function webview_closed(e) {
     log.debug("config: " + JSON.stringify(config));
     var marketItemGroup = config.marketItemGroup;
     if (marketItemGroup) {
-      log.info("marketItemGroup: " + marketItemGroup);
+      log.info("config marketItemGroup: " + marketItemGroup);
       localStorage.setItem("marketItemGroup", marketItemGroup);
+      log.info("config priceIterator: " + 0);
+      localStorage.setItem("priceIterator", 0);
       getCurrentMarketItem();
     }
 
