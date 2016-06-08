@@ -17,11 +17,14 @@ EVE Online CREST API based Pebble Watchface
         - PLEX
         - Skill Injectors/Extractors
     - Minerals
+    - Isotopes
+    - Planetary
+    - High-Tech
 - Character (requires CREST authorization)
     - Name
     - Location 
     
-Collects market information daily.
+Collects latest market information as it becomes available.
 
 Updates server info or character location (if online) and cycles through market items either half hourly or at a flick of the wrist (y-axis acc.).
 
