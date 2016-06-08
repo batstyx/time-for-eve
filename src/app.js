@@ -154,31 +154,47 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
   }
 }
 
-var minerals = JSON.parse('{ "group": "mine", "items": [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}]}');
+var minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
 
-var character = JSON.parse('{ "group": "char", "items": [{"typeId": 29668,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Skill Inj."}]}');
+var character = [{"typeId": 29668,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Skill Inj."}];
 
-var marketList = character;
+var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
+
+var planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Industrial Fibers"},{"typeId": 2392,"desc": "Oxidizing Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Precious Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Reactive Metals"},{"typeId": 3645,"desc": "Water"}];
+
+var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr. Tools"},{"typeId": 17894,"desc": "Scanner"}];
+
+// {"typeId": ,"desc": ""}
+
+function createMarket() {  
+  log.debug("createMarket");
+  var market = {};
+  market.char = character;
+  market.mine = minerals;
+  market.iso = isotopes;
+  market.plan = planetary;
+  market.tech = tech;
+  return market;
+}
+
+var market = createMarket();
 
 var TheForgeRegionId = 10000002;
+
+function getMarketItemGroup()
+{
+  var marketItemGroup = localStorage.getItem("marketItemGroup") || "char";
+  log.debug("getMarketItemGroup marketItemGroup: " + marketItemGroup);  
+  return marketItemGroup;
+}
 
 function getCurrentMarketItem() {  
   log.info("getCurrentMarketItem");
   var priceIterator = localStorage.getItem("priceIterator") || 0;
   log.debug("getCurrentMarketItem priceIterator: " + priceIterator);
-  var marketItemGroup = localStorage.getItem("marketItemGroup") || character.group;
-  log.debug("getCurrentMarketItem  marketItemGroup: " + marketItemGroup);
-  if (marketList.group !== marketItemGroup) {
-   log.debug('marketItemGroup changed!');
-    if (marketItemGroup === character.group) {
-      marketList = character;
-    } else if (marketItemGroup === minerals.group) {
-      marketList = minerals;
-    }
-    priceIterator = 0;
-  }
-  getMarketItemInfo(TheForgeRegionId, marketList.items[priceIterator].typeId, marketList.items[priceIterator].desc);
-  localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % marketList.items.length);
+  var marketItemGroup = getMarketItemGroup();
+  getMarketItemInfo(TheForgeRegionId, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
+  localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % market[marketItemGroup].length);
 }
 
 var crest_client_id = "129412347492410586014ae3a137a8c1";
