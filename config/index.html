@@ -27,6 +27,9 @@
                 <select id="market-items-group" name="text-align" class="item-select">
                     <option class="item-select-option" value="char">Character</option>
                     <option class="item-select-option" value="mine">Minerals</option>
+                    <option class="item-select-option" value="iso">Isotopes</option>
+                    <option class="item-select-option" value="plan">Planetary</option>
+                    <option class="item-select-option" value="tech">High-Tech</option>
                 </select>
             </label>
         </div>
@@ -151,6 +154,9 @@
                     var externalConfig  = JSON.parse(json);
                     var source = externalConfig.source;
                     if (source && source == "pebble") {
+                        var marketItemGroup = externalConfig.marketItemGroup;
+                        console.log('marketItemGroup: ' + marketItemGroup);
+                        if (marketItemGroup) { $('#market-items-group').val(marketItemGroup); }
                         var return_to = getQueryParam('return_to', 'pebblejs://close#');
                         console.log('return_to: ' + return_to);                    
                         localStorage['return_to'] = return_to;
