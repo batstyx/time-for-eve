@@ -91,45 +91,67 @@ function sendMarketItemInfo(item, itemDesc) {
   }); 
 }
 
+function hasMarketItemInfoExpired(marketItem) {
+  log.debug("hasMarketItemInfoExpired");
+  var expiryDate = new Date(new Date() - 172800000);
+  log.debug("hasMarketItemInfoExpired expiryDate: " + expiryDate);    
+  var marketItemDate = new Date(marketItem.date);
+  log.debug("hasMarketItemInfoExpired marketItemDate: " + marketItemDate);
+  if(marketItemDate < expiryDate) {
+    var retrievedExpiryDate = new Date(new Date() - 10800000);
+    log.debug("hasMarketItemInfoExpired retrievedExpiryDate: " + retrievedExpiryDate);
+    var marketItemRetrievedDate = marketItem.retrieved ? new Date(marketItem.retrieved) : retrievedExpiryDate;
+    log.debug("hasMarketItemInfoExpired marketItemRetrievedDate: " + marketItemRetrievedDate);
+    if(marketItemRetrievedDate <= retrievedExpiryDate) { 
+      log.debug("hasMarketItemInfoExpired true");  
+      return true;
+    }
+  }
+  log.debug("hasMarketItemInfoExpired false");  
+  return false;    
+}
+  
+function refreshMarketItemInfo(regionId, typeId, typeDesc) {
+  log.debug("refreshMarketItemInfo");
+  log.debug("refreshMarketItemInfo typeId: " + typeId);
+  log.debug("refreshMarketItemInfo typeDesc: " + typeDesc);
+  xhrRequest("https://crest-tq.eveonline.com/market/" + regionId + "/types/" + typeId + "/history/", 'GET',
+             function(json) {
+               var newest = json.items[json.totalCount - 1];
+               newest.retrieved = new Date();
+               var item_json = JSON.stringify(newest);
+               log.debug("refreshMarketItemInfo item_json: " + item_json);    
+               localStorage.setItem(typeId, item_json);
+               sendMarketItemInfo(newest, typeDesc);
+             },
+             function(req) {}
+            );
+}
+
 function getMarketItemInfo(regionId, typeId, typeDesc) {
   log.debug("getMarketItemInfo");
   log.debug("getMarketItemInfo typeId: " + typeId);
+  log.debug("getMarketItemInfo typeDesc: " + typeDesc);
   var refreshItem = false;
   var stored_json = localStorage.getItem(typeId);  
   if (stored_json) {
-    log.debug("getMarketItemInfo Stored item available");    
+    log.debug("getMarketItemInfo stored_json: " + stored_json);
+    log.info("getMarketItemInfo " + typeDesc + " available");
     var stored = JSON.parse(stored_json);
-    var storedDate = new Date(stored.date);
-    log.debug("getMarketItemInfo Stored item date: " + storedDate);    
-    var expiryDate = new Date(new Date() - 172800000);
-    log.debug("getMarketItemInfo Expiry date: " + expiryDate);    
-    if(storedDate < expiryDate) {
-      log.debug("getMarketItemInfo Stored item expired");    
-      var retrievedDate = new Date(stored.retrieved);
-      log.debug("getMarketItemInfo Stored item retrieved date: " + retrievedDate);    
-      var retrievedExpiryDate = new Date(new Date() - 10800000);
-      log.debug("getMarketItemInfo Stored item retrieved expirydate: " + retrievedExpiryDate);    
-      if(retrievedDate < retrievedExpiryDate) { refreshItem = true; } else { log.debug("getMarketItemInfo Stored item retrieved recently"); }
+    refreshItem = hasMarketItemInfoExpired(stored);
+    if (refreshItem) {
+      log.info("getMarketItemInfo " + typeDesc + " expired");
     } else {
-      log.debug("getMarketItemInfo Stored item valid");    
-      sendMarketItemInfo(stored, typeDesc);
+      log.info("getMarketItemInfo " + typeDesc + " valid");
+      sendMarketItemInfo(stored, typeDesc);  
     }
   } else { 
+    log.info("getMarketItemInfo " + typeDesc + " unavailable");
     refreshItem = true;
   }
   if (refreshItem) {
-    xhrRequest("https://crest-tq.eveonline.com/market/" + regionId + "/types/" + typeId + "/history/", 'GET',
-              function(json) {
-                var newest = json.items[json.totalCount - 1];
-                newest.retrieved = new Date();
-                var item_json = JSON.stringify(newest);
-                log.debug("getMarketItemInfo Store item: " + item_json);    
-                localStorage.setItem(typeId, item_json);
-                sendMarketItemInfo(newest, typeDesc);
-              },
-              function(req) {}
-             );
-  } 
+   refreshMarketItemInfo(regionId, typeId, typeDesc);
+  }
 }
 
 var minerals = JSON.parse('{ "group": "mine", "items": [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}]}');
