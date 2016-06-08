@@ -160,9 +160,9 @@ var character = [{"typeId": 29668,"desc" : "PLEX"},{"typeId": 40519, "desc": "Sk
 
 var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
 
-var planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Industrial Fibers"},{"typeId": 2392,"desc": "Oxidizing Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Precious Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Reactive Metals"},{"typeId": 3645,"desc": "Water"}];
+var planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Ind.Fibers"},{"typeId": 2392,"desc": "Ox.Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Prc.Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Rct.Metals"},{"typeId": 3645,"desc": "Water"}];
 
-var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr. Tools"},{"typeId": 17894,"desc": "Scanner"}];
+var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr.Tools"},{"typeId": 17894,"desc": "Scanner"}];
 
 // {"typeId": ,"desc": ""}
 
