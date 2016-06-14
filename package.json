@@ -2,7 +2,7 @@
     "author": "Notion Planetary",
     "dependencies": {},
     "keywords": [],
-    "name": "Time for EVE",
+    "name": "time-for-eve",
     "pebble": {
         "capabilities": [
             "configurable"
@@ -41,5 +41,5 @@
             "watchface": true
         }
     },
-    "version": "1.1.0"
+    "version": "1.2.0"
 }

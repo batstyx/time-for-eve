@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var INFO = true;
 var ERR = true;
 var log =  {
@@ -51,10 +51,15 @@ function sendEVEServerInfo(serviceStatus, userCount) {
   });
 }
 
+//var crestUrl = "https://api-sisi.testeveonline.com";
+var crestUrl = "https://crest-tq.eveonline.com";
+
 function getServerInfo() {  
   log.info("getServerInfo");
-  xhrRequest('https://crest-tq.eveonline.com/', 'GET',
-             function(json) { sendEVEServerInfo(json.serviceStatus.eve, json.userCounts.eve_str); },
+  xhrRequest(crestUrl, 'GET',
+             //https://developers.eveonline.com/blog/article/crest-renovations-2016-06
+             function(json) { sendEVEServerInfo(json.serviceStatus, json.userCount_str); },
+             //function(json) { sendEVEServerInfo(json.serviceStatus.eve, json.userCounts.eve_str); },
              function(req) { sendEVEServerInfo("offline", "0"); }
             );
 }
@@ -110,12 +115,18 @@ function hasMarketItemInfoExpired(marketItem) {
   log.debug("hasMarketItemInfoExpired false");  
   return false;    
 }
+
+function getMarketItemEndpoint(regionId, typeId) {
+  //https://developers.eveonline.com/blog/article/crest-renovations-2016-06
+  //return crestUrl + "/market/" + regionId + "/history/?type=" + crestUrl + "/types/" + typeId + "/";
+  return crestUrl + "/market/" + regionId + "/types/" + typeId + "/history/";
+}
   
 function refreshMarketItemInfo(regionId, typeId, typeDesc) {
   log.debug("refreshMarketItemInfo");
   log.debug("refreshMarketItemInfo typeId: " + typeId);
   log.debug("refreshMarketItemInfo typeDesc: " + typeDesc);
-  xhrRequest("https://crest-tq.eveonline.com/market/" + regionId + "/types/" + typeId + "/history/", 'GET',
+  xhrRequest(getMarketItemEndpoint(regionId, typeId), 'GET',
              function(json) {
                var newest = json.items[json.totalCount - 1];
                newest.retrieved = new Date();
@@ -162,7 +173,7 @@ var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxy
 
 var planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Ind.Fibers"},{"typeId": 2392,"desc": "Ox.Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Prc.Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Rct.Metals"},{"typeId": 3645,"desc": "Water"}];
 
-var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr.Tools"},{"typeId": 17894,"desc": "Scanner"}];
+var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr.Tools"},{"typeId": 17894,"desc": "Scanner"},{"typeId": 41533,"desc": "'Ligature'"},{"typeId": 41534,"desc": "'Zeugma'"}];
 
 // {"typeId": ,"desc": ""}
 
@@ -329,7 +340,7 @@ function getCharacterLocation() {
   use_access_token(function(access_token) {
     var characterId = localStorage.getItem("characterId");
     log.debug("getCharacterLocation characterId: " + characterId);    
-    var url = "https://crest-tq.eveonline.com/characters/" + characterId + "/location/";
+    var url = crestUrl + "/characters/" + characterId + "/location/";
     log.debug("getCharacterLocation url: " + url);
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
