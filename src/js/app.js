@@ -118,8 +118,8 @@ function hasMarketItemInfoExpired(marketItem) {
 
 function getMarketItemEndpoint(regionId, typeId) {
   //https://developers.eveonline.com/blog/article/crest-renovations-2016-06
-  //return crestUrl + "/market/" + regionId + "/history/?type=" + crestUrl + "/types/" + typeId + "/";
-  return crestUrl + "/market/" + regionId + "/types/" + typeId + "/history/";
+  return crestUrl + "/market/" + regionId + "/history/?type=" + crestUrl + "/inventory/types/" + typeId + "/";
+  //return crestUrl + "/market/" + regionId + "/types/" + typeId + "/history/";
 }
   
 function refreshMarketItemInfo(regionId, typeId, typeDesc) {
