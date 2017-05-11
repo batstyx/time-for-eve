@@ -3,9 +3,9 @@ EVE Online CREST API based Pebble Watchface
 
 # Displays
 
-![](screenshots/aplit screenshot 1.png)
-![](screenshots/aplit screenshot 2.png)
-![](screenshots/aplit screenshot 3.png)
+![PLEX Screenshot](screenshots/aplit%20screenshot%201.png)
+![Trit Screenshot](screenshots/aplit%20screenshot%202.png)
+![Skill Inj. Screenshot](screenshots/aplit%20screenshot%203.png)
 
 - Local Time (Top)
 - EVE Time
@@ -34,7 +34,7 @@ When character not logged on, displays last seen location with a tap of the scre
 
 Configure market information and authorize watch face to track character location
 
-![](screenshots/config screenshot.png)
+![Config Screenshot](screenshots/config%20screenshot.png)
 
 If you don't have a [Pebble Watch](https://www.pebble.com/) you can:
 
