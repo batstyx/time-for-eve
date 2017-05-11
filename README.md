@@ -4,7 +4,9 @@ EVE Online CREST API based Pebble Watchface
 # Displays
 
 ![PLEX Screenshot](screenshots/aplit screenshot 1.png)
+
 ![Trit Screenshot](screenshots/aplit screenshot 2.png)
+
 ![Skill Inj.](screenshots/aplit screenshot 3.png)
 
 - Local Time (Top)
