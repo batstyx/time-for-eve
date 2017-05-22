@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var INFO = true;
 var ERR = true;
 var log =  {
@@ -51,8 +51,6 @@ function sendEVEServerInfo(serviceStatus, userCount) {
   });
 }
 
-//var crestUrl = "https://api-sisi.testeveonline.com";
-var crestUrl = "https://crest-tq.eveonline.com";
 var esiUrl = "https://esi.tech.ccp.is/latest";
 
 function getServerInfo() {  
@@ -164,7 +162,7 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
 
 var minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
 
-var character = [{"typeId": 44992,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Skill Inj."}];
+var character = [{"typeId": 44992,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."}];
 
 var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
 
@@ -207,7 +205,8 @@ function getCurrentMarketItem() {
 
 var crest_client_id = "129412347492410586014ae3a137a8c1";
 var crest_redirect_url = "https://login.eveonline.com/oauth/authorize";
-var crest_scope = "publicData+characterLocationRead";
+//var crest_scope = "publicData+characterLocationRead";
+var crest_scope = "esi-location.read_location.v1";
 var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
@@ -336,7 +335,7 @@ function getCharacterLocation() {
   use_access_token(function(access_token) {
     var characterId = localStorage.getItem("characterId");
     log.debug("getCharacterLocation characterId: " + characterId);    
-    var url = crestUrl + "/characters/" + characterId + "/location/";
+    var url = esiUrl + "/characters/" + characterId + "/location/";
     log.debug("getCharacterLocation url: " + url);
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
@@ -348,8 +347,11 @@ function getCharacterLocation() {
       if (req.readyState == 4 && req.status == 200) {          
         var result = JSON.parse(req.responseText);
         if (result) {
-          if (result.solarSystem) {
-            sendCharacterInfo(localStorage.getItem("characterName"), result.solarSystem.name);
+          if (result.solar_system_id) {
+             xhrRequest(esiUrl + "/universe/systems/" + result.solar_system_id, 'GET',
+             function(json) { sendCharacterInfo(localStorage.getItem("characterName"), json.name); },
+             function(req) { }
+            );
           }
         }
       }
