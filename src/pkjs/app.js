@@ -53,13 +53,12 @@ function sendEVEServerInfo(serviceStatus, userCount) {
 
 //var crestUrl = "https://api-sisi.testeveonline.com";
 var crestUrl = "https://crest-tq.eveonline.com";
+var esiUrl = "https://esi.tech.ccp.is/latest";
 
 function getServerInfo() {  
   log.info("getServerInfo");
-  xhrRequest(crestUrl, 'GET',
-             //https://developers.eveonline.com/blog/article/crest-renovations-2016-06
-             function(json) { sendEVEServerInfo(json.serviceStatus, json.userCount_str); },
-             //function(json) { sendEVEServerInfo(json.serviceStatus.eve, json.userCounts.eve_str); },
+  xhrRequest(esiUrl + '/status/', 'GET',
+             function(json) { sendEVEServerInfo(json.vip ? "vip": "online", json.players.toString()); },
              function(req) { sendEVEServerInfo("offline", "0"); }
             );
 }
@@ -91,8 +90,8 @@ function sendMarketItemInfo(item, itemDesc) {
   sendToPebble({
     "CREST_KEY_MARKET_ITEM_DESC": itemDesc,
     "CREST_KEY_MARKET_ITEM_VALUE1": format_number(item.volume),
-    "CREST_KEY_MARKET_ITEM_VALUE2": format_number(item.highPrice),
-    "CREST_KEY_MARKET_ITEM_VALUE3": format_number(item.lowPrice),
+    "CREST_KEY_MARKET_ITEM_VALUE2": format_number(item.highest),
+    "CREST_KEY_MARKET_ITEM_VALUE3": format_number(item.lowest),
   }); 
 }
 
@@ -117,9 +116,7 @@ function hasMarketItemInfoExpired(marketItem) {
 }
 
 function getMarketItemEndpoint(regionId, typeId) {
-  //https://developers.eveonline.com/blog/article/crest-renovations-2016-06
-  return crestUrl + "/market/" + regionId + "/history/?type=" + crestUrl + "/inventory/types/" + typeId + "/";
-  //return crestUrl + "/market/" + regionId + "/types/" + typeId + "/history/";
+  return esiUrl + "/markets/" + regionId + "/history/?type_id=" + typeId;
 }
   
 function refreshMarketItemInfo(regionId, typeId, typeDesc) {
@@ -128,7 +125,7 @@ function refreshMarketItemInfo(regionId, typeId, typeDesc) {
   log.debug("refreshMarketItemInfo typeDesc: " + typeDesc);
   xhrRequest(getMarketItemEndpoint(regionId, typeId), 'GET',
              function(json) {
-               var newest = json.items[json.totalCount - 1];
+               var newest = json[json.length - 1];
                newest.retrieved = new Date();
                var item_json = JSON.stringify(newest);
                log.debug("refreshMarketItemInfo item_json: " + item_json);    
@@ -147,7 +144,7 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
   var stored_json = localStorage.getItem(typeId);  
   if (stored_json) {
     log.debug("getMarketItemInfo stored_json: " + stored_json);
-    log.info("getMarketItemInfo " + typeDesc + " available");
+    log.info("getMarketItemInfo " + typeDesc + " cached");
     var stored = JSON.parse(stored_json);
     refreshItem = hasMarketItemInfoExpired(stored);
     if (refreshItem) {
@@ -157,7 +154,7 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
       sendMarketItemInfo(stored, typeDesc);  
     }
   } else { 
-    log.info("getMarketItemInfo " + typeDesc + " unavailable");
+    log.info("getMarketItemInfo " + typeDesc + " uncached");
     refreshItem = true;
   }
   if (refreshItem) {
@@ -211,7 +208,6 @@ function getCurrentMarketItem() {
 var crest_client_id = "129412347492410586014ae3a137a8c1";
 var crest_redirect_url = "https://login.eveonline.com/oauth/authorize";
 var crest_scope = "publicData+characterLocationRead";
-//var app_config_url = "https://rawgit.com/batstyx/time-for-eve/master/config/index.html";
 var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
