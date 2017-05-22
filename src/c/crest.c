@@ -18,10 +18,10 @@ static void update_string_text_layer(Tuple *tuple, char *buffer, int buffer_size
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Receiving crest dictionary");
   
-  Tuple *user_count_tuple = dict_find(iterator, CREST_KEY_EVE_USER_COUNT);
+  Tuple *user_count_tuple = dict_find(iterator, MESSAGE_KEY_EVE_USER_COUNT);
   update_string_text_layer(user_count_tuple, s_user_count, sizeof(s_user_count), view->user_count_layer);
   
-  Tuple *service_status_tuple = dict_find(iterator, CREST_KEY_EVE_SERVICE_STATUS);
+  Tuple *service_status_tuple = dict_find(iterator, MESSAGE_KEY_EVE_SERVICE_STATUS);
   update_string_text_layer(service_status_tuple,s_service_status, sizeof(s_service_status), view->service_status_layer);
   
   if(user_count_tuple && service_status_tuple) {
@@ -35,10 +35,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     }
   }
    
-  Tuple *market_item_desc_tuple = dict_find(iterator, CREST_KEY_MARKET_ITEM_DESC);
-  Tuple *market_item_value1_tuple = dict_find(iterator, CREST_KEY_MARKET_ITEM_VALUE1);
-  Tuple *market_item_value2_tuple = dict_find(iterator, CREST_KEY_MARKET_ITEM_VALUE2);
-  Tuple *market_item_value3_tuple = dict_find(iterator, CREST_KEY_MARKET_ITEM_VALUE3);
+  Tuple *market_item_desc_tuple = dict_find(iterator, MESSAGE_KEY_MARKET_ITEM_DESC);
+  Tuple *market_item_value1_tuple = dict_find(iterator, MESSAGE_KEY_MARKET_ITEM_VALUE1);
+  Tuple *market_item_value2_tuple = dict_find(iterator, MESSAGE_KEY_MARKET_ITEM_VALUE2);
+  Tuple *market_item_value3_tuple = dict_find(iterator, MESSAGE_KEY_MARKET_ITEM_VALUE3);
   if(market_item_desc_tuple && market_item_value1_tuple && market_item_value2_tuple && market_item_value3_tuple) {   
     update_string_text_layer(market_item_desc_tuple, s_market_item_desc, sizeof(s_market_item_desc), view->market_item_desc_layer);    
     update_string_text_layer(market_item_value1_tuple, s_market_item_value1, sizeof(s_market_item_value1), view->market_item_value1_layer);    
@@ -46,8 +46,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     update_string_text_layer(market_item_value3_tuple, s_market_item_value3, sizeof(s_market_item_value3), view->market_item_value3_layer);    
   }
   
-  Tuple *char_name_tuple = dict_find(iterator, CREST_KEY_CHAR_NAME);
-  Tuple *char_location_tuple = dict_find(iterator, CREST_KEY_CHAR_LOCATION);
+  Tuple *char_name_tuple = dict_find(iterator, MESSAGE_KEY_CHAR_NAME);
+  Tuple *char_location_tuple = dict_find(iterator, MESSAGE_KEY_CHAR_LOCATION);
   if(char_name_tuple && char_location_tuple) {
     update_string_text_layer(char_name_tuple, s_char_name, sizeof(s_char_name), view->service_status_layer);
     update_string_text_layer(char_location_tuple, s_char_location, sizeof(s_char_location), view->user_count_layer);     
@@ -101,14 +101,14 @@ static void init_string(const uint32_t key, char *buffer, int buffer_size, char 
 }
 
 void crest_initialise(MainView *data) {
-  init_string(CREST_KEY_EVE_USER_COUNT, s_user_count, sizeof(s_user_count), "?");
-  init_string(CREST_KEY_EVE_SERVICE_STATUS, s_service_status, sizeof(s_service_status), "unknown");
-  init_string(CREST_KEY_MARKET_ITEM_DESC, s_market_item_desc, sizeof(s_market_item_desc), "");
-  init_string(CREST_KEY_MARKET_ITEM_VALUE1, s_market_item_value1, sizeof(s_market_item_value1), "");
-  init_string(CREST_KEY_MARKET_ITEM_VALUE2, s_market_item_value2, sizeof(s_market_item_value2), "");
-  init_string(CREST_KEY_MARKET_ITEM_VALUE3, s_market_item_value3, sizeof(s_market_item_value3), "");
-  init_string(CREST_KEY_CHAR_NAME, s_char_name, sizeof(s_char_name), "");
-  init_string(CREST_KEY_CHAR_LOCATION, s_char_location, sizeof(s_char_location), "");
+  init_string(MESSAGE_KEY_EVE_USER_COUNT, s_user_count, sizeof(s_user_count), "?");
+  init_string(MESSAGE_KEY_EVE_SERVICE_STATUS, s_service_status, sizeof(s_service_status), "unknown");
+  init_string(MESSAGE_KEY_MARKET_ITEM_DESC, s_market_item_desc, sizeof(s_market_item_desc), "");
+  init_string(MESSAGE_KEY_MARKET_ITEM_VALUE1, s_market_item_value1, sizeof(s_market_item_value1), "");
+  init_string(MESSAGE_KEY_MARKET_ITEM_VALUE2, s_market_item_value2, sizeof(s_market_item_value2), "");
+  init_string(MESSAGE_KEY_MARKET_ITEM_VALUE3, s_market_item_value3, sizeof(s_market_item_value3), "");
+  init_string(MESSAGE_KEY_CHAR_NAME, s_char_name, sizeof(s_char_name), "");
+  init_string(MESSAGE_KEY_CHAR_LOCATION, s_char_location, sizeof(s_char_location), "");
    
   view = data;
   
@@ -128,13 +128,13 @@ void crest_initialise(MainView *data) {
 }
   
 void crest_terminate() {
-  persist_write_string(CREST_KEY_EVE_USER_COUNT, s_user_count);
-  persist_write_string(CREST_KEY_EVE_SERVICE_STATUS, s_service_status);
-  persist_write_string(CREST_KEY_MARKET_ITEM_DESC, s_market_item_desc);
-  persist_write_string(CREST_KEY_MARKET_ITEM_VALUE1, s_market_item_value1);
-  persist_write_string(CREST_KEY_MARKET_ITEM_VALUE2, s_market_item_value2);
-  persist_write_string(CREST_KEY_MARKET_ITEM_VALUE3, s_market_item_value3);
-  persist_write_string(CREST_KEY_CHAR_NAME, s_char_name);
-  persist_write_string(CREST_KEY_CHAR_LOCATION, s_char_location);
+  persist_write_string(MESSAGE_KEY_EVE_USER_COUNT, s_user_count);
+  persist_write_string(MESSAGE_KEY_EVE_SERVICE_STATUS, s_service_status);
+  persist_write_string(MESSAGE_KEY_MARKET_ITEM_DESC, s_market_item_desc);
+  persist_write_string(MESSAGE_KEY_MARKET_ITEM_VALUE1, s_market_item_value1);
+  persist_write_string(MESSAGE_KEY_MARKET_ITEM_VALUE2, s_market_item_value2);
+  persist_write_string(MESSAGE_KEY_MARKET_ITEM_VALUE3, s_market_item_value3);
+  persist_write_string(MESSAGE_KEY_CHAR_NAME, s_char_name);
+  persist_write_string(MESSAGE_KEY_CHAR_LOCATION, s_char_location);
 }
 

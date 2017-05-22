@@ -9,16 +9,16 @@
         ],
         "displayName": "Time for EVE Online",
         "enableMultiJS": true,
-        "messageKeys": {
-            "CREST_KEY_CHAR_LOCATION": 7,
-            "CREST_KEY_CHAR_NAME": 6,
-            "CREST_KEY_EVE_SERVICE_STATUS": 1,
-            "CREST_KEY_EVE_USER_COUNT": 0,
-            "CREST_KEY_MARKET_ITEM_DESC": 2,
-            "CREST_KEY_MARKET_ITEM_VALUE1": 3,
-            "CREST_KEY_MARKET_ITEM_VALUE2": 4,
-            "CREST_KEY_MARKET_ITEM_VALUE3": 5
-        },
+        "messageKeys": [
+            "EVE_USER_COUNT",
+            "EVE_SERVICE_STATUS",
+            "MARKET_ITEM_DESC",
+            "MARKET_ITEM_VALUE1",
+            "MARKET_ITEM_VALUE2",
+            "MARKET_ITEM_VALUE3",
+            "CHAR_NAME",
+            "CHAR_LOCATION"
+        ],
         "projectType": "native",
         "resources": {
             "media": [

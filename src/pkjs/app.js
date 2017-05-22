@@ -46,8 +46,8 @@ function sendEVEServerInfo(serviceStatus, userCount) {
   log.debug("sendEVEServerInfo serviceStatus: " + serviceStatus);
   log.debug("sendEVEServerInfo userCount: " + userCount);
   sendToPebble({
-    "CREST_KEY_EVE_USER_COUNT": userCount,
-    "CREST_KEY_EVE_SERVICE_STATUS": serviceStatus
+    EVE_USER_COUNT: userCount,
+    EVE_SERVICE_STATUS: serviceStatus
   });
 }
 
@@ -86,10 +86,10 @@ function format_number(value) {
 function sendMarketItemInfo(item, itemDesc) {
   log.info("sendMarketItemInfo");
   sendToPebble({
-    "CREST_KEY_MARKET_ITEM_DESC": itemDesc,
-    "CREST_KEY_MARKET_ITEM_VALUE1": format_number(item.volume),
-    "CREST_KEY_MARKET_ITEM_VALUE2": format_number(item.highest),
-    "CREST_KEY_MARKET_ITEM_VALUE3": format_number(item.lowest),
+    MARKET_ITEM_DESC: itemDesc,
+    MARKET_ITEM_VALUE1: format_number(item.volume),
+    MARKET_ITEM_VALUE2: format_number(item.highest),
+    MARKET_ITEM_VALUE3: format_number(item.lowest),
   }); 
 }
 
@@ -325,8 +325,8 @@ function sendCharacterInfo(charName, charLocation) {
   log.debug("sendCharacterInfo charName: " + charName);
   log.debug("sendCharacterInfo charLocation: " + charLocation);
   sendToPebble({
-    "CREST_KEY_CHAR_NAME": charName,
-    "CREST_KEY_CHAR_LOCATION": charLocation
+    CHAR_NAME: charName,
+    CHAR_LOCATION: charLocation
   });
 }
 
