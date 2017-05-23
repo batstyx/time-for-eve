@@ -206,7 +206,7 @@ function getCurrentMarketItem() {
 var crest_client_id = "129412347492410586014ae3a137a8c1";
 var crest_redirect_url = "https://login.eveonline.com/oauth/authorize";
 //var crest_scope = "publicData+characterLocationRead";
-var crest_scope = "esi-location.read_location.v1";
+var crest_scope = "esi-location.read_location.v1+esi-location.read_ship_type.v1";
 var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
@@ -341,17 +341,17 @@ function getCharacterLocation() {
     req.open("GET", url, true);
     req.setRequestHeader("Authorization", "Bearer " + access_token);
     req.onload = function(e) {
-      log.debug("getCharacterInfo readyState: " + req.readyState);
-      log.debug("getCharacterInfo status: " + req.status);
-      log.debug("getCharacterInfo responseText: " + req.responseText);
+      log.debug("getCharacterLocation readyState: " + req.readyState);
+      log.debug("getCharacterLocation status: " + req.status);
+      log.debug("getCharacterLocation responseText: " + req.responseText);
       if (req.readyState == 4 && req.status == 200) {          
         var result = JSON.parse(req.responseText);
         if (result) {
           if (result.solar_system_id) {
              xhrRequest(esiUrl + "/universe/systems/" + result.solar_system_id, 'GET',
-             function(json) { sendCharacterInfo(localStorage.getItem("characterName"), json.name); },
-             function(req) { }
-            );
+                        function(json) { sendCharacterInfo(localStorage.getItem("characterName"), json.name); },
+                        function(req) { }
+                       );
           }
         }
       }
@@ -360,6 +360,35 @@ function getCharacterLocation() {
   });
 }
 
+function getCharacterShip() {
+  log.info("getCharacterShip");
+  use_access_token(function(access_token) {
+    var characterId = localStorage.getItem("characterId");
+    log.debug("getCharacterShip characterId: " + characterId);    
+    var url = esiUrl + "/characters/" + characterId + "/ship/";
+    log.debug("getCharacterShip url: " + url);
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.setRequestHeader("Authorization", "Bearer " + access_token);
+    req.onload = function(e) {
+      log.debug("getCharacterShip readyState: " + req.readyState);
+      log.debug("getCharacterShip status: " + req.status);
+      log.debug("getCharacterShip responseText: " + req.responseText);
+      if (req.readyState == 4 && req.status == 200) {          
+        var result = JSON.parse(req.responseText);
+        if (result) {
+          if (result.ship_name) {
+            xhrRequest(esiUrl + "/universe/types/" + result.ship_type_id, 'GET',
+                       function(json) { sendCharacterInfo(localStorage.getItem("characterName"), json.name); },
+                       function(req) { }
+                      );
+          }
+        }
+      }
+    };
+    req.send();
+  });
+}
 Pebble.addEventListener('ready',
   function(e) {
     log.info("Pebble Event: ready");
