@@ -203,10 +203,9 @@ function getCurrentMarketItem() {
   localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % market[marketItemGroup].length);
 }
 
-var crest_client_id = "129412347492410586014ae3a137a8c1";
-var crest_redirect_url = "https://login.eveonline.com/oauth/authorize";
-//var crest_scope = "publicData+characterLocationRead";
-var crest_scope = "esi-location.read_location.v1";
+var auth_client_id = "129412347492410586014ae3a137a8c1";
+var auth_redirect_url = "https://login.eveonline.com/oauth/authorize";
+var auth_scope = "esi-location.read_location.v1";
 var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
 var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
@@ -397,7 +396,7 @@ function show_configuration() {
     "source": "pebble",
     "marketItemGroup": marketItemGroup,
     "code": code,
-    "redirect": crest_redirect_url + "?response_type=code&client_id=" + crest_client_id + "&redirect_uri=" + app_redirect_url + "&scope=" + crest_scope,
+    "redirect": auth_redirect_url + "?response_type=code&client_id=" + auth_client_id + "&redirect_uri=" + app_redirect_url + "&scope=" + auth_scope,
   });
   
   log.debug("show_configuration json: " + json);  

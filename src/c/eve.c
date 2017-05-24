@@ -1,4 +1,4 @@
-#include "crest.h"
+#include "eve.h"
 
 static MainView *view;
 
@@ -16,7 +16,7 @@ static void update_string_text_layer(Tuple *tuple, char *buffer, int buffer_size
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "Receiving crest dictionary");
+  APP_LOG(APP_LOG_LEVEL_INFO, "Receiving eve dictionary");
   
   Tuple *user_count_tuple = dict_find(iterator, MESSAGE_KEY_EVE_USER_COUNT);
   update_string_text_layer(user_count_tuple, s_user_count, sizeof(s_user_count), view->user_count_layer);
@@ -54,7 +54,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
 }
 
-static void update_crest() {
+static void update() {
     DictionaryIterator *iter;
     app_message_outbox_begin(&iter);
 
@@ -75,17 +75,17 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
 
-void crest_timed_update(struct tm *tick_time) {
+void eve_timed_update(struct tm *tick_time) {
   if(tick_time->tm_min % s_retry_time == 2) {  
-    update_crest();
+    update();
   }
 }
 
-void crest_update() {
-  update_crest();
+void eve_update() {
+  update();
 }
 
-void crest_last_seen() {
+void eve_last_seen() {
   if (strlen(s_char_name) > 0 && strlen(s_char_location) > 0) {
     text_layer_set_text(view->service_status_layer, s_char_name);  
     text_layer_set_text(view->user_count_layer, s_char_location);  
@@ -100,7 +100,7 @@ static void init_string(const uint32_t key, char *buffer, int buffer_size, char 
   }
 }
 
-void crest_initialise(MainView *data) {
+void eve_initialise(MainView *data) {
   init_string(MESSAGE_KEY_EVE_USER_COUNT, s_user_count, sizeof(s_user_count), "?");
   init_string(MESSAGE_KEY_EVE_SERVICE_STATUS, s_service_status, sizeof(s_service_status), "unknown");
   init_string(MESSAGE_KEY_MARKET_ITEM_DESC, s_market_item_desc, sizeof(s_market_item_desc), "");
@@ -127,7 +127,7 @@ void crest_initialise(MainView *data) {
   app_message_open(APP_MESSAGE_INBOX_SIZE_MINIMUM, APP_MESSAGE_OUTBOX_SIZE_MINIMUM);
 }
   
-void crest_terminate() {
+void eve_terminate() {
   persist_write_string(MESSAGE_KEY_EVE_USER_COUNT, s_user_count);
   persist_write_string(MESSAGE_KEY_EVE_SERVICE_STATUS, s_service_status);
   persist_write_string(MESSAGE_KEY_MARKET_ITEM_DESC, s_market_item_desc);
