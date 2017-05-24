@@ -1,5 +1,5 @@
 # Time for EVE
-EVE Online CREST API based Pebble Watchface
+EVE Online Pebble Watchface
 
 # Displays
 
@@ -20,7 +20,7 @@ EVE Online CREST API based Pebble Watchface
     - Isotopes
     - Planetary
     - High-Tech
-- Character (requires CREST authorization)
+- Character (requires SSO authorization)
     - Name
     - Location 
     
