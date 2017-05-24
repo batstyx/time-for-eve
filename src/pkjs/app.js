@@ -162,7 +162,7 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
 
 var minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
 
-var character = [{"typeId": 44992,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."}];
+var character = [{"typeId": 44992,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."},{"typeId": 45635, "desc": "Small Inj."}];
 
 var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
 
