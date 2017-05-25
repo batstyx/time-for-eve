@@ -340,9 +340,9 @@ function getCharacterLocation() {
     req.open("GET", url, true);
     req.setRequestHeader("Authorization", "Bearer " + access_token);
     req.onload = function(e) {
-      log.debug("getCharacterInfo readyState: " + req.readyState);
-      log.debug("getCharacterInfo status: " + req.status);
-      log.debug("getCharacterInfo responseText: " + req.responseText);
+      log.debug("getCharacterLocation readyState: " + req.readyState);
+      log.debug("getCharacterLocation status: " + req.status);
+      log.debug("getCharacterLocation responseText: " + req.responseText);
       if (req.readyState == 4 && req.status == 200) {          
         var result = JSON.parse(req.responseText);
         if (result) {
