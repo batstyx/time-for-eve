@@ -3,9 +3,9 @@ EVE Online Pebble Watchface
 
 # Displays
 
-![PLEX Screenshot](screenshots/aplit%20screenshot%201.png)
-![Trit Screenshot](screenshots/aplit%20screenshot%202.png)
-![Skill Inj. Screenshot](screenshots/aplit%20screenshot%203.png)
+![Char Market Screenshot](screenshots/basalt%20screenshot%201.gif)
+![Tritanium Screenshot](screenshots/aplit%20screenshot%202.png)
+![Character Location Screenshot](screenshots/aplit%20screenshot%203.png)
 
 - Local Time (Top)
 - EVE Time
