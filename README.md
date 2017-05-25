@@ -20,7 +20,7 @@ EVE Online Pebble Watchface
     - Isotopes
     - Planetary
     - High-Tech
-- Character (requires SSO authorization)
+- Character (requires [SSO authorization](https://community.eveonline.com/news/dev-blogs/eve-online-sso-and-what-you-need-to-know/))
     - Name
     - Location 
     
