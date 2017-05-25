@@ -1,4 +1,4 @@
-var DEBUG = true;
+var DEBUG = false;
 var INFO = true;
 var ERR = true;
 var log =  {
@@ -366,19 +366,23 @@ Pebble.addEventListener('ready',
     
     getServerInfo();
     getCurrentMarketItem();
-    getCharacterLocation();
   }
 );
+
+var SERVER_INFO = 1;
+var MARKET_INFO = 2;
+var CHAR_INFO = 4;
 
 // Listen for when an AppMessage is received
 Pebble.addEventListener('appmessage',
   function(e) {
     log.info("Pebble Event: appmessage");
     log.debug("Pebble Message: " + JSON.stringify(e));
-    
-    getServerInfo();
-    getCurrentMarketItem();
-    getCharacterLocation();
+    var dict = e.payload;
+    var mask = parseInt(dict.EVE_INFO);
+    if ((mask & SERVER_INFO) == SERVER_INFO) getServerInfo();
+    if ((mask & MARKET_INFO) == MARKET_INFO) getCurrentMarketItem();
+    if ((mask & CHAR_INFO) == CHAR_INFO) getCharacterLocation();
   }                     
 );
 

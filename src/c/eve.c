@@ -1,5 +1,9 @@
 #include "eve.h"
 
+#define SERVER_INFO 1
+#define MARKET_INFO 2
+#define CHAR_INFO 4
+
 static MainView *view;
 
 static char s_user_count[9], s_service_status[9], s_char_name[25], s_char_location[25];
@@ -50,17 +54,25 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *char_location_tuple = dict_find(iterator, MESSAGE_KEY_CHAR_LOCATION);
   if(char_name_tuple && char_location_tuple) {
     update_string_text_layer(char_name_tuple, s_char_name, sizeof(s_char_name), view->service_status_layer);
-    update_string_text_layer(char_location_tuple, s_char_location, sizeof(s_char_location), view->user_count_layer);     
+    update_string_text_layer(char_location_tuple, s_char_location, sizeof(s_char_location), view->user_count_layer);   
   }
 }
 
-static void update() {
+static void request_info(int args) {
     DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
+    AppMessageResult result = app_message_outbox_begin(&iter);
 
-    dict_write_uint8(iter, 0, 0);
+    if(result == APP_MSG_OK) {
+      dict_write_int(iter, MESSAGE_KEY_EVE_INFO, &args, sizeof(int), true);
 
-    app_message_outbox_send();
+      result = app_message_outbox_send();
+      
+      if(result != APP_MSG_OK) {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+      }
+    } else {
+      APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+    }
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
@@ -77,19 +89,16 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 
 void eve_timed_update(struct tm *tick_time) {
   if(tick_time->tm_min % s_retry_time == 2) {  
-    update();
+    request_info(SERVER_INFO + MARKET_INFO);
   }
 }
 
 void eve_update() {
-  update();
+  request_info(SERVER_INFO + MARKET_INFO);
 }
 
-void eve_last_seen() {
-  if (strlen(s_char_name) > 0 && strlen(s_char_location) > 0) {
-    text_layer_set_text(view->service_status_layer, s_char_name);  
-    text_layer_set_text(view->user_count_layer, s_char_location);  
-  }
+void eve_update_char() {
+   request_info(CHAR_INFO);
 }
 
 static void init_string(const uint32_t key, char *buffer, int buffer_size, char *default_value) {  

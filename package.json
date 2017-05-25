@@ -17,7 +17,8 @@
             "MARKET_ITEM_VALUE2",
             "MARKET_ITEM_VALUE3",
             "CHAR_NAME",
-            "CHAR_LOCATION"
+            "CHAR_LOCATION",
+            "EVE_INFO"
         ],
         "projectType": "native",
         "resources": {

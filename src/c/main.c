@@ -29,10 +29,10 @@ static void tap_handler(AccelAxisType axis, int32_t direction) {
   case ACCEL_AXIS_Z:
     if (direction > 0) {
       APP_LOG(APP_LOG_LEVEL_INFO, "Z axis positive.");
-      eve_last_seen();
+      eve_update_char();
     } else {
       APP_LOG(APP_LOG_LEVEL_INFO, "Z axis negative.");
-      eve_last_seen();
+      eve_update_char();
     }
     break;
   }
