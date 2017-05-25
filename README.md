@@ -26,9 +26,9 @@ EVE Online Pebble Watchface
     
 Collects latest market information as it becomes available.
 
-Updates server info or character location (if online) and cycles through market items either half hourly or at a flick of the wrist (y-axis acc.).
+Updates server info and cycles through market items either half hourly or at a flick of the wrist [y-axis acc.].
 
-When character not logged on, displays last seen location with a tap of the screen (z-axis acc.).
+Displays character location with a tap of the screen [z-axis acc.]. The display will return to server/market info on the next timed update or at a flick of the wrist.
 
 # Configuration
 
