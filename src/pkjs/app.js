@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var INFO = true;
 var ERR = true;
 var log =  {
@@ -156,13 +156,15 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
     refreshItem = true;
   }
   if (refreshItem) {
-   refreshMarketItemInfo(regionId, typeId, typeDesc);
+    refreshMarketItemInfo(typeId == PLEXtypeId ? PLEXRegionId : regionId, typeId, typeDesc);
   }
 }
 
+var PLEXtypeId = 44992
+
 var minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
 
-var character = [{"typeId": 44992,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."},{"typeId": 45635, "desc": "Small Inj."}];
+var character = [{"typeId": PLEXtypeId,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."},{"typeId": 45635, "desc": "Small Inj."}];
 
 var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
 
@@ -186,6 +188,7 @@ function createMarket() {
 var market = createMarket();
 
 var TheForgeRegionId = 10000002;
+var PLEXRegionId = 19000001;
 
 function getMarketItemGroup()
 {
@@ -199,7 +202,7 @@ function getCurrentMarketItem() {
   var priceIterator = localStorage.getItem("priceIterator") || 0;
   log.debug("getCurrentMarketItem priceIterator: " + priceIterator);
   var marketItemGroup = getMarketItemGroup();
-  getMarketItemInfo(0, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
+  getMarketItemInfo(TheForgeRegionId, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
   localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % market[marketItemGroup].length);
 }
 
