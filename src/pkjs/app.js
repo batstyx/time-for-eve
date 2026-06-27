@@ -51,7 +51,7 @@ function sendEVEServerInfo(serviceStatus, userCount) {
   });
 }
 
-var esiUrl = "https://esi.tech.ccp.is/latest";
+var esiUrl = "https://esi.evetech.net/latest";
 
 function getServerInfo() {  
   log.info("getServerInfo");
