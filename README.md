@@ -36,7 +36,8 @@ Configure market information and authorize watch face to track character locatio
 
 ![Config Screenshot](screenshots/config%20screenshot.png)
 
-If you don't have a [Pebble Watch](https://www.pebble.com/) you can:
+If you don't have a [Pebble Watch](https://www.repebble.com/) you can:
 
-[Import into CloudPebble](https://cloudpebble.net/ide/import/github/batstyx/time-for-eve/)
+[Import into CloudPebble](https://cloudpebble.repebble.com/ide/import/github/batstyx/time-for-eve/)
+
 
