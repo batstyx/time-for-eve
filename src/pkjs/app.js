@@ -199,7 +199,7 @@ function getCurrentMarketItem() {
   var priceIterator = localStorage.getItem("priceIterator") || 0;
   log.debug("getCurrentMarketItem priceIterator: " + priceIterator);
   var marketItemGroup = getMarketItemGroup();
-  getMarketItemInfo(TheForgeRegionId, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
+  getMarketItemInfo(0, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
   localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % market[marketItemGroup].length);
 }
 
