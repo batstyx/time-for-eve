@@ -1,3 +1,16 @@
+## [v1.6: Core Devices Watches and Global PLEX](https://github.com/batstyx/time-for-eve/releases/tag/v1.6)
+
+**Features**
+None
+
+**Changes**
+- Global PLEX market (rather than Jita)
+- Pebble Duo 2 support
+- Basic Pebble Time 2 + Pebble Round 2 support (no scaling)
+
+**Bug Fixes**
+- Update expired URLs
+
 ## [v1.5: ESI and Injectors](https://github.com/batstyx/time-for-eve/releases/tag/v1.5)
 2017-05-25
 
