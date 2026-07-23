@@ -1,7 +1,7 @@
-var DEBUG = true;
-var INFO = true;
-var ERR = true;
-var log =  {
+const DEBUG = true;
+const INFO = true;
+const ERR = true;
+let log =  {
   debug: DEBUG ? function (message) { console.log("DBG " + message); } : function (){},
   info: INFO ? function (message) { console.log("INF " + message); } : function (){},
   error: ERR ? function (message) { console.log("ERR " + message); } : function (){},
@@ -19,16 +19,16 @@ function sendToPebble(dictionary) {
         });
 }
 
-var xhrRequest = function (url, type, success, failure) {
+let xhrRequest = function (url, type, success, failure) {
   log.debug("xhrRequest url: " + url);
-  var xhr = new XMLHttpRequest();
+  let xhr = new XMLHttpRequest();
   xhr.onload = function () {
     log.debug("xhrRequest onload url: " + url);
     log.debug("xhrRequest readyState: " + this.readyState);
     log.debug("xhrRequest status: " + this.status);
     if (this.readyState == 4 && this.status == 200) {
       log.debug("xhrRequest responseText: " + this.responseText);
-      var json = JSON.parse(this.responseText);
+      let json = JSON.parse(this.responseText);
       success(json);
     } else {
       failure(this);
@@ -51,7 +51,7 @@ function sendEVEServerInfo(serviceStatus, userCount) {
   });
 }
 
-var esiUrl = "https://esi.evetech.net/latest";
+const esiUrl = "https://esi.evetech.net/latest";
 
 function getServerInfo() {  
   log.info("getServerInfo");
@@ -64,11 +64,11 @@ function getServerInfo() {
 function format_number(value) {
   if (value > 999) {
     if (value > 9999) {
-      var foursf = value.toPrecision(4);
-      var digits = foursf.substring(0,5).replace(".", "");
-      var size = parseInt(foursf.split("+")[1], 10);
-      var decimalpt = parseInt(foursf.split("+")[1], 10)%3 + 1;
-      var final = digits.substring(0, decimalpt) + "." + digits.substring(decimalpt);
+      const foursf = value.toPrecision(4);
+      const digits = foursf.substring(0,5).replace(".", "");
+      const size = parseInt(foursf.split("+")[1], 10);
+      const decimalpt = parseInt(foursf.split("+")[1], 10)%3 + 1;
+      const final = digits.substring(0, decimalpt) + "." + digits.substring(decimalpt);
       if (size > 8) {
         return final + ' B';
       } else if (size > 5) {
@@ -95,14 +95,14 @@ function sendMarketItemInfo(item, itemDesc) {
 
 function hasMarketItemInfoExpired(marketItem) {
   log.debug("hasMarketItemInfoExpired");
-  var expiryDate = new Date(new Date() - 172800000);
+  let expiryDate = new Date(new Date() - 172800000);
   log.debug("hasMarketItemInfoExpired expiryDate: " + expiryDate);    
-  var marketItemDate = new Date(marketItem.date);
+  let marketItemDate = new Date(marketItem.date);
   log.debug("hasMarketItemInfoExpired marketItemDate: " + marketItemDate);
   if(marketItemDate < expiryDate) {
-    var retrievedExpiryDate = new Date(new Date() - 10800000);
+    let retrievedExpiryDate = new Date(new Date() - 10800000);
     log.debug("hasMarketItemInfoExpired retrievedExpiryDate: " + retrievedExpiryDate);
-    var marketItemRetrievedDate = marketItem.retrieved ? new Date(marketItem.retrieved) : retrievedExpiryDate;
+    let marketItemRetrievedDate = marketItem.retrieved ? new Date(marketItem.retrieved) : retrievedExpiryDate;
     log.debug("hasMarketItemInfoExpired marketItemRetrievedDate: " + marketItemRetrievedDate);
     if(marketItemRetrievedDate <= retrievedExpiryDate) { 
       log.debug("hasMarketItemInfoExpired true");  
@@ -123,9 +123,9 @@ function refreshMarketItemInfo(regionId, typeId, typeDesc) {
   log.debug("refreshMarketItemInfo typeDesc: " + typeDesc);
   xhrRequest(getMarketItemEndpoint(regionId, typeId), 'GET',
              function(json) {
-               var newest = json[json.length - 1];
+               let newest = json[json.length - 1];
                newest.retrieved = new Date();
-               var item_json = JSON.stringify(newest);
+               let item_json = JSON.stringify(newest);
                log.debug("refreshMarketItemInfo item_json: " + item_json);    
                localStorage.setItem(typeId, item_json);
                sendMarketItemInfo(newest, typeDesc);
@@ -138,12 +138,12 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
   log.debug("getMarketItemInfo");
   log.debug("getMarketItemInfo typeId: " + typeId);
   log.debug("getMarketItemInfo typeDesc: " + typeDesc);
-  var refreshItem = false;
-  var stored_json = localStorage.getItem(typeId);  
+  let refreshItem = false;
+  let stored_json = localStorage.getItem(typeId);  
   if (stored_json) {
     log.debug("getMarketItemInfo stored_json: " + stored_json);
     log.info("getMarketItemInfo " + typeDesc + " cached");
-    var stored = JSON.parse(stored_json);
+    let stored = JSON.parse(stored_json);
     refreshItem = hasMarketItemInfoExpired(stored);
     if (refreshItem) {
       log.info("getMarketItemInfo " + typeDesc + " expired");
@@ -160,23 +160,23 @@ function getMarketItemInfo(regionId, typeId, typeDesc) {
   }
 }
 
-var PLEXtypeId = 44992
+const PLEXtypeId = 44992
 
-var minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
+const minerals = [{"typeId": 34, "desc": "Tritanium"},{"typeId": 35, "desc": "Pyerite"},{"typeId": 36, "desc": "Mexallon"},{"typeId": 37, "desc": "Isogen"},{"typeId": 38, "desc": "Nocxium"},{"typeId": 39, "desc": "Zydrine"},{"typeId": 40, "desc": "Megacyte"}];
 
-var character = [{"typeId": PLEXtypeId,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."},{"typeId": 45635, "desc": "Small Inj."}];
+const character = [{"typeId": PLEXtypeId,"desc" : "PLEX"},{"typeId": 40519, "desc": "Skill Ext."},{"typeId": 40520, "desc": "Large Inj."},{"typeId": 45635, "desc": "Small Inj."}];
 
-var isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
+const isotopes = [{"typeId": 16274,"desc": "Helium"},{"typeId": 17887,"desc": "Oxygen"},{"typeId": 17888,"desc": "Nitrogen"},{"typeId": 17889,"desc": "Hydrogen"}];
 
-var planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Ind.Fibers"},{"typeId": 2392,"desc": "Ox.Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Prc.Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Rct.Metals"},{"typeId": 3645,"desc": "Water"}];
+const planetary = [{"typeId": 2393,"desc": "Bacteria"},{"typeId": 2396,"desc": "Biofuels"},{"typeId": 3779,"desc": "Biomass"},{"typeId": 2390,"desc": "Electrolytes"},{"typeId": 2397,"desc": "Ind.Fibers"},{"typeId": 2392,"desc": "Ox.Compound"},{"typeId": 3683,"desc": "Oxygen"},{"typeId": 2389,"desc": "Plasmoids"},{"typeId": 2399,"desc": "Prc.Metals"},{"typeId": 2395,"desc": "Proteins"},{"typeId": 2398,"desc": "Rct.Metals"},{"typeId": 3645,"desc": "Water"}];
 
-var tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr.Tools"},{"typeId": 17894,"desc": "Scanner"},{"typeId": 41533,"desc": "'Ligature'"},{"typeId": 41534,"desc": "'Zeugma'"}];
+const tech = [{"typeId": 17893,"desc": "Data Chip"},{"typeId": 17895,"desc": "Mfr.Tools"},{"typeId": 17894,"desc": "Scanner"},{"typeId": 41533,"desc": "'Ligature'"},{"typeId": 41534,"desc": "'Zeugma'"}];
 
 // {"typeId": ,"desc": ""}
 
 function createMarket() {  
   log.debug("createMarket");
-  var market = {};
+  let market = {};
   market.char = character;
   market.mine = minerals;
   market.iso = isotopes;
@@ -185,37 +185,37 @@ function createMarket() {
   return market;
 }
 
-var market = createMarket();
+const market = createMarket();
 
-var TheForgeRegionId = 10000002;
-var PLEXRegionId = 19000001;
+const TheForgeRegionId = 10000002;
+const PLEXRegionId = 19000001;
 
 function getMarketItemGroup()
 {
-  var marketItemGroup = localStorage.getItem("marketItemGroup") || "char";
+  let marketItemGroup = localStorage.getItem("marketItemGroup") || "char";
   log.debug("getMarketItemGroup marketItemGroup: " + marketItemGroup);  
   return marketItemGroup;
 }
 
 function getCurrentMarketItem() {  
   log.info("getCurrentMarketItem");
-  var priceIterator = localStorage.getItem("priceIterator") || 0;
+  let priceIterator = localStorage.getItem("priceIterator") || 0;
   log.debug("getCurrentMarketItem priceIterator: " + priceIterator);
-  var marketItemGroup = getMarketItemGroup();
+  let marketItemGroup = getMarketItemGroup();
   getMarketItemInfo(TheForgeRegionId, market[marketItemGroup][priceIterator].typeId, market[marketItemGroup][priceIterator].desc);
   localStorage.setItem("priceIterator", (parseInt(priceIterator) + 1) % market[marketItemGroup].length);
 }
 
-var auth_client_id = "129412347492410586014ae3a137a8c1";
-var auth_redirect_url = "https://login.eveonline.com/oauth/authorize";
-var auth_scope = "esi-location.read_location.v1";
-var app_config_url = "https://batstyx.github.io/time-for-eve/config/";
-var app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
+const auth_client_id = "129412347492410586014ae3a137a8c1";
+const auth_redirect_url = "https://login.eveonline.com/oauth/authorize";
+const auth_scope = "esi-location.read_location.v1";
+const app_config_url = "https://batstyx.github.io/time-for-eve/config/";
+const app_redirect_url = "https://batstyx.github.io/time-for-eve/config/redirect.html";
 
 function resolve_tokens(code, callback) {
   log.debug("resolve_tokens");
   log.debug("resolve_tokens code: " + code);
-  var req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.open("POST", "https://login.eveonline.com/oauth/token", true);
   req.setRequestHeader("Authorization", "Basic MTI5NDEyMzQ3NDkyNDEwNTg2MDE0YWUzYTEzN2E4YzE6SnBQMDRJMXMzMjF2TVhHelBkNWg3d1czZUFSaEVDZ3pUT1FqMGFsVg==");
   req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -225,7 +225,7 @@ function resolve_tokens(code, callback) {
     log.debug("resolve_tokens status: "+ req.status);
     log.debug("resolve_tokens responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {
-      var result = JSON.parse(req.responseText);
+      let result = JSON.parse(req.responseText);
 
       if (result.refresh_token && result.access_token) {
         log.info("resolve_tokens refresh_token: " + result.refresh_token);
@@ -248,9 +248,9 @@ function resolve_tokens(code, callback) {
 
 function use_access_token(callback) {
   log.debug("use_access_token");
-  var refresh_token = localStorage.getItem("refresh_token");
+  let refresh_token = localStorage.getItem("refresh_token");
   log.debug("use_access_token refresh_token: " + refresh_token);
-  var access_token = localStorage.getItem("access_token");
+  let access_token = localStorage.getItem("access_token");
   log.debug("use_access_token access_token: " + access_token);
 
   if (!refresh_token) return;
@@ -262,7 +262,7 @@ function use_access_token(callback) {
 
 function valid_token(access_token, success, failure) {
   log.debug("valid_token");
-  var req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.open("GET", "https://login.eveonline.com/oauth/verify", true);
   req.setRequestHeader("Authorization", "Bearer " + access_token);
   req.setRequestHeader("Host", "login.eveonline.com");
@@ -271,7 +271,7 @@ function valid_token(access_token, success, failure) {
     log.debug("valid_token status: "+ req.status);
     log.debug("valid_token responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {
-      var result = JSON.parse(req.responseText);
+      let result = JSON.parse(req.responseText);
       
       if (result.TokenType == "Character") {
         log.debug("valid_token Character");
@@ -300,7 +300,7 @@ function valid_token(access_token, success, failure) {
 
 function refresh_access_token(refresh_token, callback) {
   log.debug("refresh_access_token");
-  var req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.open("POST", "https://login.eveonline.com/oauth/token", true);
   req.setRequestHeader("Authorization", "Basic MTI5NDEyMzQ3NDkyNDEwNTg2MDE0YWUzYTEzN2E4YzE6SnBQMDRJMXMzMjF2TVhHelBkNWg3d1czZUFSaEVDZ3pUT1FqMGFsVg==");
   req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -310,7 +310,7 @@ function refresh_access_token(refresh_token, callback) {
     log.debug("refresh_access_token status: "+ req.status);
     log.debug("refresh_access_token responseText: " + req.responseText);
     if (req.readyState == 4 && req.status == 200) {          
-      var result = JSON.parse(req.responseText);
+      let result = JSON.parse(req.responseText);
 
       if (result.access_token) {
         log.info("refresh_access_token access_token: " + result.access_token);
@@ -335,11 +335,11 @@ function sendCharacterInfo(charName, charLocation) {
 function getCharacterLocation() {
   log.info("getCharacterLocation");
   use_access_token(function(access_token) {
-    var characterId = localStorage.getItem("characterId");
+    let characterId = localStorage.getItem("characterId");
     log.debug("getCharacterLocation characterId: " + characterId);    
-    var url = esiUrl + "/characters/" + characterId + "/location/";
+    let url = esiUrl + "/characters/" + characterId + "/location/";
     log.debug("getCharacterLocation url: " + url);
-    var req = new XMLHttpRequest();
+    let req = new XMLHttpRequest();
     req.open("GET", url, true);
     req.setRequestHeader("Authorization", "Bearer " + access_token);
     req.onload = function(e) {
@@ -347,7 +347,7 @@ function getCharacterLocation() {
       log.debug("getCharacterLocation status: " + req.status);
       log.debug("getCharacterLocation responseText: " + req.responseText);
       if (req.readyState == 4 && req.status == 200) {          
-        var result = JSON.parse(req.responseText);
+        let result = JSON.parse(req.responseText);
         if (result) {
           if (result.solar_system_id) {
              xhrRequest(esiUrl + "/universe/systems/" + result.solar_system_id, 'GET',
@@ -372,17 +372,17 @@ Pebble.addEventListener('ready',
   }
 );
 
-var SERVER_INFO = 1;
-var MARKET_INFO = 2;
-var CHAR_INFO = 4;
+const SERVER_INFO = 1;
+const MARKET_INFO = 2;
+const CHAR_INFO = 4;
 
 // Listen for when an AppMessage is received
 Pebble.addEventListener('appmessage',
   function(e) {
     log.info("Pebble Event: appmessage");
     log.debug("Pebble Message: " + JSON.stringify(e));
-    var dict = e.payload;
-    var mask = parseInt(dict.EVE_INFO);
+    let dict = e.payload;
+    let mask = parseInt(dict.EVE_INFO);
     if ((mask & SERVER_INFO) == SERVER_INFO) getServerInfo();
     if ((mask & MARKET_INFO) == MARKET_INFO) getCurrentMarketItem();
     if ((mask & CHAR_INFO) == CHAR_INFO) getCharacterLocation();
@@ -392,14 +392,14 @@ Pebble.addEventListener('appmessage',
 // When you click on Settings in Pebble's phone app. Go to the configuration.html page.
 function show_configuration() {
   log.debug("show_configuration");
-  var marketItemGroup = getMarketItemGroup();
-  var code = localStorage.getItem("code");
+  let marketItemGroup = getMarketItemGroup();
+  let code = localStorage.getItem("code");
   log.debug("show_configuration code: " + code);
-  var code_error = localStorage.getItem("code_error");
+  let code_error = localStorage.getItem("code_error");
   log.debug("show_configuration code_error: " + code_error);
   localStorage.removeItem("code_error");
 
-  var json = JSON.stringify({
+  let json = JSON.stringify({
     "source": "pebble",
     "marketItemGroup": marketItemGroup,
     "code": code,
@@ -415,9 +415,9 @@ function show_configuration() {
 // When you click Save on the configuration.html page, receive the configuration response here.
 function webview_closed(e) {
     log.debug("webview_closed");
-    var config = JSON.parse(decodeURIComponent(e.response));
+    let config = JSON.parse(decodeURIComponent(e.response));
     log.debug("config: " + JSON.stringify(config));
-    var marketItemGroup = config.marketItemGroup;
+    let marketItemGroup = config.marketItemGroup;
     if (marketItemGroup) {
       log.info("config marketItemGroup: " + marketItemGroup);
       localStorage.setItem("marketItemGroup", marketItemGroup);
@@ -426,9 +426,9 @@ function webview_closed(e) {
       getCurrentMarketItem();
     }
 
-    var eveAuthorizationCode = config.eveAuthorizationCode;
+    let eveAuthorizationCode = config.eveAuthorizationCode;
     log.debug("eveAuthorizationCode: " + eveAuthorizationCode);
-    var old_code = localStorage.getItem("code");
+    let old_code = localStorage.getItem("code");
     if (old_code != eveAuthorizationCode) {
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("access_token");
